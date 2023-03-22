@@ -1,0 +1,47 @@
+term.clear()
+local w,h =term.getSize()
+function pC (y,s)
+ local x = math.floor((w - string.len(s))/2)
+ term.setCursorPos(x,y)
+ term.clearLine()
+ term.write(s)
+end
+nOption = 1
+local function drawFrontend()
+    pC(math.floor(h/2) - 3, "")
+    pC(math.floor(h/2) - 2, "Do you want to uninstall 'cinOS'?")
+    pC(math.floor(h/2) - 1, "")
+    pC(math.floor(h/2) + 0, ((nOption == 1) and "[ Yes ]   No  ") or ((nOption == 2) and "  Yes   [ No ]"))
+end
+drawFrontend()
+while true do
+ local e,p = os.pullEvent() 
+  if e == "key" then
+   local key = p 
+   if key == 263 or key == 65 then
+    if nOption > 1 then
+     nOption = nOption - 1
+    end
+   elseif key == 262 or key == 68 then
+    if nOption < 2 then
+     nOption = nOption + 1
+    end
+   elseif key == 257 or key == 32 then
+   break 
+   end
+   drawFrontend()
+  end
+end
+term.clear()
+function uninstall ()
+    shell.run("delete","/.oslogin")
+    shell.run("delete","/.back")
+    shell.run("delete","/.sys")
+    shell.run("delete","/startup")
+    print("'cinOS' has been deleted.")
+end
+if nOption == 1 then
+ uninstall()
+else
+ shell.run("/.back")
+end

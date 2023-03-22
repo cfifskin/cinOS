@@ -1,0 +1,50 @@
+os.pullEvent = os.pullEventRaw
+term.clear()
+--Centered text
+local w,h =term.getSize()
+function pC (y,s)
+ local x = math.floor((w - string.len(s))/2)
+ term.setCursorPos(x,y)
+ term.clearLine()
+ term.write(s)
+end
+--GUI
+loginBlock = true
+loginPos = 1
+local function drawLogin()
+ pC(math.floor(h/2) - 2, "Login")
+ pC(math.floor(h/2) + 0, ((loginBlock == true and loginPos > 4) and "Access is denied!") or ((loginBlock == false) and "Access is allowed!") or "Enter Password:") 
+ pC(math.floor(h/2) + 1, ((loginPos > 4) and "") or ((loginPos == 1) and "[_...]") or ((loginPos == 2) and "[*_..]") or ((loginPos == 3) and "[**_.]") or ((loginPos == 4) and "[***_]"))
+end
+--Password input and check
+--vpw is valid password
+vpw = {49,50,51,52}
+ipw = {}
+drawLogin()
+while true do
+ local e,p = os.pullEvent()
+ if e == "key" then
+ local key = p 
+  if loginPos <= 4 then 
+   ipw[loginPos] = p 
+   loginPos = loginPos + 1
+  end
+  if loginPos > 4 then
+   if ipw[1] == vpw[1] and ipw[2] == vpw[2] and ipw[3] == vpw[3] and ipw[4] == vpw[4] then
+    loginBlock = false
+    break
+   else
+    break
+   end 
+  end
+ end
+ drawLogin() 
+end
+--login end
+drawLogin()
+sleep(2)
+if loginBlock == false then
+ shell.run("/.sys/menu")
+else
+os.reboot()
+end

@@ -1,0 +1,91 @@
+term.clear()
+local w,h =term.getSize()
+function pC (y,s)
+ local x = math.floor((w - string.len(s))/2)
+ term.setCursorPos(x,y)
+ term.clearLine()
+ term.write(s)
+end
+local nOption = 1
+local rnOption = 1
+modemSide=""
+RNCond = rednet.isOpen()
+local function drawRNConnect ()
+    pC(math.floor(h/2) - 4,"Which side of the PC is the modem connected?")
+    pC(math.floor(h/2) - 2, ((rnOption == 1) and "[ Top    ]") or "Top   ")
+    pC(math.floor(h/2) - 1, ((rnOption == 2) and "[ Bottom ]") or "Bottom")
+    pC(math.floor(h/2) + 0, ((rnOption == 3) and "[ Front  ]") or "Front ")
+    pC(math.floor(h/2) + 1, ((rnOption == 4) and "[ Back   ]") or "Back  ")
+    pC(math.floor(h/2) + 2, ((rnOption == 5) and "[ Left   ]") or "Left  ")
+    pC(math.floor(h/2) + 3, ((rnOption == 6) and "[ Right  ]") or "Right ")
+end
+drawRNConnect()
+if RNCond == false then
+while true do
+    local e,p = os.pullEvent() 
+     if e == "key" then
+      local key = p 
+      if key == 265 or key == 87 then
+       if rnOption > 1 then
+        rnOption = rnOption - 1
+       end
+      elseif key == 264 or key == 83 then
+       if rnOption < 6 then
+        rnOption = rnOption + 1
+       end
+      elseif key == 257 or key == 32 then
+      break 
+      end
+      drawRNConnect()
+     end
+   end
+   term.clear()
+   if rnOption == 1 then
+       modemSide= "top"
+      elseif rnOption == 2 then
+       modemSide= "bottom"
+      elseif rnOption == 3 then
+        modemSide= "front"
+      elseif rnOption == 4 then
+        modemSide= "back"
+      elseif rnOption == 5 then
+        modemSide= "left"
+      else
+        modemSide= "right"
+    end
+    rednet.open(modemSide)
+end
+local function drawFrontend()
+    pC(math.floor(h/2) - 3, "Mail")
+    pC(math.floor(h/2) - 1, ((nOption == 1) and "[ Send File ]") or "Send File")
+    pC(math.floor(h/2) + 0, ((nOption == 2) and "[ Get File  ]") or "Get File ")
+    pC(math.floor(h/2) + 2, ((nOption == 3) and "[ Back      ]") or "Back     ")
+end
+drawFrontend()
+while true do
+ local e,p = os.pullEvent() 
+  if e == "key" then
+   local key = p 
+   if key == 265 or key == 87 then
+    if nOption > 1 then
+     nOption = nOption - 1
+    end
+   elseif key == 264 or key == 83 then
+    if nOption < 3 then
+     nOption = nOption + 1
+    end
+   elseif key == 257 or key == 32 then
+   break 
+   end
+   drawFrontend()
+  end
+end
+term.clear()
+if nOption == 1 then
+    shell.run("/.sys/os/fprograms/sendfile")
+   elseif nOption == 2 then
+    shell.run("/.sys/os/fprograms/getfile")
+   else
+    rednet.close()
+    shell.run("/.sys/menu")
+   end

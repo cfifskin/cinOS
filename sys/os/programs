@@ -1,0 +1,50 @@
+term.clear()
+os.pullEvent = os.pullEventRaw
+local w, h = term.getSize()
+function pC (y,s)
+ local x = math.floor((w - string.len(s)) / 2)
+ term.setCursorPos(x,y)
+ term.clearLine()
+ term.write(s)
+end
+local nOption = 1
+
+term.clear()
+
+local function drawFrontend()
+    pC(math.floor(h/2) - 3, "")
+    pC(math.floor(h/2) - 2, "Program List")
+    pC(math.floor(h/2) - 1, "")
+    pC(math.floor(h/2) + 0, ((nOption == 1) and "[ Mail     ]") or "Mail    ")
+    pC(math.floor(h/2) + 1, ((nOption == 2) and "[ Key Test ]") or "Key Test")
+    pC(math.floor(h/2) + 4, ((nOption == 3) and "[ Back     ]") or "Back    ")
+end
+
+drawFrontend()
+while true do
+ local e,p = os.pullEvent() 
+  if e == "key" then
+   local key = p 
+   if key == 265 or key == 87 then
+    if nOption > 1 then
+     nOption = nOption - 1
+    end
+   elseif key == 264 or key == 83 then
+    if nOption < 3 then
+     nOption = nOption + 1
+    end
+   elseif key == 257 or key == 32 then
+   break 
+   end
+   drawFrontend()
+  end
+end
+term.clear()
+
+if nOption == 1 then
+ shell.run("/disk/os/.sys/os/mail")
+elseif nOption == 2 then
+ shell.run("/.sys/os/fprograms/keytest")
+else
+ shell.run("/.back")
+end

@@ -1,0 +1,44 @@
+term.clear()
+local w,h =term.getSize()
+function pC (y,s)
+ local x = math.floor((w - string.len(s))/2)
+ term.setCursorPos(x,y)
+ term.clearLine()
+ term.write(s)
+end
+local nOption = 1
+local function drawFrontend()
+    pC(math.floor(h/2) - 1, ((nOption == 1) and "[ Reboot   ]") or "Reboot  ")
+    pC(math.floor(h/2) - 0, ((nOption == 2) and "[ Shutdown ]") or "Shutdown")
+    pC(math.floor(h/2) + 1, ((nOption == 3) and "[ Logout   ]") or "Logout  ")
+    pC(math.floor(h/2) + 3, ((nOption == 4) and "[ Back     ]") or "Back    ")
+end
+drawFrontend()
+while true do
+ local e,p = os.pullEvent() 
+  if e == "key" then
+   local key = p 
+   if key == 265 or key == 87 then
+    if nOption > 1 then
+     nOption = nOption - 1
+    end
+   elseif key == 264 or key == 83 then
+    if nOption < 4 then
+     nOption = nOption + 1
+    end
+   elseif key == 257 or key == 32 then
+   break 
+   end
+   drawFrontend()
+  end
+end
+term.clear()
+if nOption == 1 then
+    os.reboot()
+   elseif nOption == 2 then
+    os.shutdown()
+   elseif nOption == 3 then
+    shell.run("/.oslogin")
+   else
+    shell.run("/.sys/menu")
+   end

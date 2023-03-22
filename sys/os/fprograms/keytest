@@ -1,0 +1,40 @@
+term.clear()
+os.pullEvent = os.pullEventRaw
+s = ""
+local w, h = term.getSize()
+function pC (y,s)
+    local x = math.floor((w - string.len(s))/2)
+    term.setCursorPos(x,y)
+    term.clearLine()
+    term.write(s)
+   end
+
+term.clear()
+kID=""
+kName=""
+local function drawFrontend()
+    pC(math.floor(h/2) - 3, "Key ID checker.")
+    pC(math.floor(h/2) - 2, "Press 'f1' for exit.")
+    pC(math.floor(h/2) + 1, "Key")
+    pC(math.floor(h/2) + 2, kName)
+    pC(math.floor(h/2) + 4, "ID")
+    pC(math.floor(h/2) + 5, kID)
+    pC(math.floor(h/2) + 10, "'f1' key Id is '290'")
+   
+end
+
+drawFrontend()
+while true do
+ local e,p = os.pullEvent() 
+  if e == "key" then
+    if p == 290 then break end
+    kID = tostring(p)
+    kName = keys.getName(p)
+   drawFrontend()
+  end
+end
+term.clear()
+shell.run("/.sys/os/programs")
+
+
+
